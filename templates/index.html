@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .loading-icon {
+            display: none;
+            margin-top: 10px;
+        }
+        .loading-icon img {
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sentiment Analysis Using LLM</h2>
+        <form id="sentiment-form">
+            <input type="text" id="input-text" name="input" class="input-field" placeholder="Enter text...">
+            <select id="lang-select" name="Lang" class="input-field">
+                <option value="EN">English</option>
+                <option value="IND">Indonesian</option>
+            </select>
+            <button type="submit" class="submit-btn">Analyze</button>
+        </form>
+        <div class="loading-icon" id="loading">
+            <img src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="Loading...">
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('sentiment-form');
+        const loading = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const inputText = formData.get('input');
+            const Lang = formData.get('Lang');
+
+            loading.style.display = 'block';
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/sentiment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ input: inputText, Lang: Lang })
+                });
+
+                const data = await response.json();
+                const { input, label, score } = data;
+                resultDiv.innerHTML = `<p>The '${input}' input is ${label} with a score of ${score}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error: ${error}</p>`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
