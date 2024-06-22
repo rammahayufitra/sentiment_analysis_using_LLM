@@ -10,3 +10,4 @@ fastapi, model pretrained hugging-face, HTML,CSS and javascript
     Access the app: http://localhost:8000
 
 If there are no errors on your PC, you will see the output in your browser, as shown in the picture below."
+![dashboard]()
